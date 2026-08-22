@@ -2,6 +2,8 @@ import json, os, sys, base64
 from pathlib import Path
 import requests
 from dotenv import load_dotenv
+from PIL import Image
+
 
 load_dotenv()
 

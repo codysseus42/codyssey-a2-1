@@ -51,7 +51,10 @@ def generate_text(prompt: str) -> str:
 def generate_image(prompt :str) -> bytes:
     #필요하시면 해당 내용부분을 바꾸신 provider
     body = {"contents": [{"parts": [{"text": prompt}]}],
-             "generationConfig": {"responseModalities": ["IMAGE"]}        
+             "generationConfig": {
+                                    "responseModalities": ["IMAGE"],
+                                   "imageConfig": {"aspectRatio": "1:1"}
+                                 }        
            }
     r = _call(IMAGE_MODEL, body)
     print(r.status_code)
@@ -59,4 +62,5 @@ def generate_image(prompt :str) -> bytes:
     print([list(p.keys()) for p in parts])
     for p in parts:
          if "inlineData" in p:
+            print(p["inlineData"]["mimeType"])
             return base64.b64decode(p["inlineData"]["data"]) 
