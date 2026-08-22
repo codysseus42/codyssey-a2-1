@@ -22,7 +22,7 @@ def apiText(prompt,jsonBrief):
    print(r.status_code)
    print(json.dumps(r.json(), ensure_ascii=False, indent=2))
 
-def brand_generator():
+def main():
     api_key = os.environ.get("API_KEY")
     if not api_key:
         print(".env 파일에 API_KEY를 설정하세요.(.env.example 참고)")
@@ -52,4 +52,4 @@ def brand_generator():
     print("프로그램을 종료합니다.")            
 
 if __name__ == "__main__":
-    brand_generator()
+    main()
