@@ -1,4 +1,5 @@
 import json, os
+from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 from PIL import Image
@@ -28,9 +29,20 @@ def load_prompt(stage_name: str, payload: dict) -> str:
         raise ValueError(f"prompts/{stage_name}.txt에 {{{{입력}}}} 자리표시자가 없습니다")
     payload_text = json.dumps(payload, ensure_ascii=False, indent=2)
     return template.replace("{{입력}}", payload_text)
-def run_stage(stage_name: str, payload: dict, out_dir: Path) -> dict | None: 
+def log_warning(out_dir: Path, stage_name: str, message: str) -> None:
+    line = f"{datetime.now():%Y-%m-%d %H:%M:%S} [{stage_name}] {message}\n"
+    with open(out_dir / "warning.txt", "a", encoding="utf-8") as f:
+        f.write(line)
+
+def run_stage(stage_name: str, payload: dict, out_dir: Path) -> dict | None:
     prompt = load_prompt(stage_name,payload)
-    result = gp.generate_text(prompt)
+    try:
+        result = gp.generate_text(prompt)
+    except RuntimeError as e:
+        print(f"[{stage_name}] API 호출 실패: {e}")
+        return None
+    if gp.LAST_FALLBACK_USED is not None:
+        log_warning(out_dir, stage_name, f"폴백 모델 사용: {gp.LAST_FALLBACK_USED}")
     try:
         jsonResult = json.loads(result)
     except json.JSONDecodeError as e:
