@@ -4,10 +4,12 @@ import os, base64, requests, time
 Gemini API 호출 계층.
 
 .env 설정:
-  GEMINI_API_KEY    필수
-  TEXT_MODEL        기본 gemini-3.7-flash
-  IMAGE_MODEL       기본 gemini-3.1-flash-image
-  BASE_URL   기본 https://generativelanguage.googleapis.com/v1beta/models
+  API_KEY                필수
+  TEXT_MODEL             기본 gemini-3.7-flash
+  IMAGE_MODEL            기본 gemini-3.1-flash-image
+  TEXT_MODEL_FALLBACK    기본 gemini-3.6-flash
+  IMAGE_MODEL_FALLBACK   기본 gemini-3.1-flash-lite-image
+  BASE_URL               기본 https://generativelanguage.googleapis.com/v1beta/models
 
 다른 프로바이더로 교체할 때 바꿀 곳:
   _call()           URL 조립과 인증 헤더
