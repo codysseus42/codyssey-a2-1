@@ -70,7 +70,7 @@ def main():
 
     context = {"brief": brief}
 
-    print("[1/5] 브랜드 네이밍 생성 중...")
+    print("[1/6] 브랜드 네이밍 생성 중...")
     naming = run_stage("naming", brief, out)
     if naming is None:
         naming = run_stage("naming", brief, out)
@@ -81,20 +81,20 @@ def main():
         for i, n in enumerate(naming["names"], 1):
             print(f"  {i}. {n['ko']} ({n['en']}) - {n['meaning']}")
 
-    print("[2/5] 슬로건 생성 중...")
+    print("[2/6] 슬로건 생성 중...")
     slogan = run_stage("slogan", context, out)
     if slogan is not None and slogan.get("slogans") is not None:
         context["slogans"] = slogan["slogans"]
         for i, s in enumerate(slogan["slogans"], 1):
             print(f"  {i}. {s}")
 
-    print("[3/5] 브랜드 스토리 생성 중...")
+    print("[3/6] 브랜드 스토리 생성 중...")
     story = run_stage("story", context, out)
     if story is not None and story.get("story") is not None:
         context["story"] = story["story"]
         print(f"  {story['story']} ({len(story['story'])}자)")
 
-    print("[4/5] 컬러 팔레트 생성 중...")
+    print("[4/6] 컬러 팔레트 생성 중...")
     palette = run_stage("palette", context, out)
     if palette is not None:
         palette_data = {}
@@ -111,13 +111,14 @@ def main():
             for s in palette["sub"]:
                 print(f"  서브: {s['hex']} ({s['name']}) - {s['role']}")
 
-    print("[5/5] 로고 시안 생성 중...")
+    print("[5/6] 로고 컨셉 생성 중...")
     logo = run_stage("logo", context, out)
     if logo is not None and logo.get("logo_prompts") is not None:
+        print("[6/6] 로고 이미지 생성 중...")
         logos = []
         total = len(logo["logo_prompts"])
         for i, item in enumerate(logo["logo_prompts"], 1):
-            print(f"{item['id']} [{i}/{total}] 생성 중...")
+            print(f"  {item['id']} [{i}/{total}] 생성 중...")
             try:
                 image_bytes = gp.generate_image(item["prompt"])
             except RuntimeError as e:
