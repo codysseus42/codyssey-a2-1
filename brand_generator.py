@@ -91,17 +91,70 @@ def run_stage(stage_name: str, payload: dict, out_dir: Path) -> dict | None:
         print(f"[{stage_name}] 예상치 못한 오류: {e}")
         return None
 
+def build_brand_result(brief: dict, naming: dict | None, slogan: dict | None, story: dict | None,
+                        palette_data: dict | None, logos: list | None, failed_stages: list,
+                        out_dir: Path) -> None:
+    result = {
+        "generated_at": datetime.now().isoformat(),
+        "brief": brief,
+        "names": naming.get("names") if naming is not None else None,
+    }
+    if naming is not None and naming.get("comparison") is not None:
+        result["comparison"] = naming["comparison"]
+    result["slogans"] = slogan.get("slogans") if slogan is not None else None
+    if story is not None and story.get("story") is not None:
+        result["story"] = {"text": story["story"], "char_count": len(story["story"])}
+    else:
+        result["story"] = None
+    if palette_data:
+        result["palette"] = {**palette_data, "image": "color_palette.png"}
+    else:
+        result["palette"] = None
+    result["logos"] = logos
+    result["failed_stages"] = failed_stages
+
+    path = out_dir / "brand_result.json"
+    path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+
 def main():
     out = None
     try:
         load_dotenv()
-        brief_path = "./brief_sample/brief_cafe.json"
-        brief = load_brief(brief_path)
-        out = Path("./output") / Path(brief_path).stem
+        print("=== 브랜드 아이덴티티 생성기 ===")
+        while True:
+            brief_path = input("브리프 파일 경로를 입력하세요 (엔터: ./brief_sample/brief_cafe.json, 0: 종료): ").strip()
+            if brief_path == "0":
+                print("프로그램을 종료합니다.")
+                return
+            if brief_path == "":
+                brief_path = "./brief_sample/brief_cafe.json"
+            try:
+                brief = load_brief(brief_path)
+                break
+            except ValueError as e:
+                print(e)
+
+        out_input = input("출력 폴더를 입력하세요 (엔터: ./output): ").strip()
+        if out_input == "":
+            out_input = "./output"
+        out = Path(out_input) / Path(brief_path).stem
         out.mkdir(parents=True, exist_ok=True)
-        (out / "pipeline").mkdir(exist_ok=True)
+
+        pipeline_dir = out / "pipeline"
+        if pipeline_dir.exists():
+            for f in pipeline_dir.rglob("*"):
+                if f.is_file():
+                    f.unlink()
+        for f in out.glob("*.png"):
+            f.unlink()
+        warning_path = out / "warning.txt"
+        if warning_path.exists():
+            warning_path.unlink()
+
+        pipeline_dir.mkdir(exist_ok=True)
 
         context = {"brief": brief}
+        failed_stages = []
 
         print("[1/6] 브랜드 네이밍 생성 중...")
         naming = run_stage("naming", brief, out)
@@ -109,10 +162,13 @@ def main():
             naming = run_stage("naming", brief, out)
         if naming is None:
             print("[naming] 재시도 후에도 실패했습니다. 다음 단계로 진행합니다.")
+            failed_stages.append("naming")
         elif naming.get("names") is not None:
             context["names"] = naming["names"]
             for i, n in enumerate(naming["names"], 1):
                 print(f"  {i}. {n['ko']} ({n['en']}) - {n['meaning']}")
+        else:
+            failed_stages.append("naming")
 
         print("[2/6] 슬로건 생성 중...")
         slogan = run_stage("slogan", context, out)
@@ -120,14 +176,19 @@ def main():
             context["slogans"] = slogan["slogans"]
             for i, s in enumerate(slogan["slogans"], 1):
                 print(f"  {i}. {s}")
+        else:
+            failed_stages.append("slogan")
 
         print("[3/6] 브랜드 스토리 생성 중...")
         story = run_stage("story", context, out)
         if story is not None and story.get("story") is not None:
             context["story"] = story["story"]
             print(f"  {story['story']} ({len(story['story'])}자)")
+        else:
+            failed_stages.append("story")
 
         print("[4/6] 컬러 팔레트 생성 중...")
+        palette_data = None
         palette = run_stage("palette", context, out)
         if palette is not None:
             palette_data = {}
@@ -138,19 +199,25 @@ def main():
             if palette_data:
                 context["palette"] = palette_data
                 save_palette_image(palette_data, out)
+            else:
+                palette_data = None
             if palette.get("main") is not None:
                 m = palette["main"]
                 print(f"  메인: {m['hex']} ({m['name']}) - {m['role']}")
             if palette.get("sub") is not None:
                 for s in palette["sub"]:
                     print(f"  서브: {s['hex']} ({s['name']}) - {s['role']}")
+        if palette_data is None:
+            failed_stages.append("palette")
 
         print("[5/6] 로고 컨셉 생성 중...")
         logo = run_stage("logo", context, out)
+        logos = None
         if logo is not None and logo.get("logo_prompts") is not None:
             print("[6/6] 로고 이미지 생성 중...")
             logos = []
             total = len(logo["logo_prompts"])
+            fail_count = 0
             for i, item in enumerate(logo["logo_prompts"], 1):
                 print(f"  {item['id']} [{i}/{total}] 생성 중...")
                 try:
@@ -158,16 +225,35 @@ def main():
                 except RuntimeError as e:
                     print(f"[logo] {item['id']} 이미지 생성 실패: {e}")
                     log_warning(out, item["id"], f"이미지 생성 실패: {e}")
+                    fail_count += 1
                     continue
                 if gp.LAST_FALLBACK_USED is not None:
                     log_warning(out, item["id"], f"폴백 모델 사용: {gp.LAST_FALLBACK_USED}")
                 filename = f"{item['id']}.png"
                 image = Image.open(BytesIO(image_bytes))
                 image.save(out / filename)
-                logos.append(filename)
+                logos.append({"file": filename, "concept": item.get("concept")})
+            if fail_count > 0:
+                summary = f"로고 시안 {fail_count}개 생성 실패, {len(logos)}개 저장됨"
+                print(f"[logo] {summary}")
+                log_warning(out, "logo", summary)
+            if not logos:
+                failed_stages.append("logo")
+                logos = None
             context["logos"] = logos
+        else:
+            failed_stages.append("logo")
 
-        print(context)
+        build_brand_result(brief, naming, slogan, story, palette_data, logos, failed_stages, out)
+        if failed_stages:
+            print(f"완료 (실패한 단계: {', '.join(failed_stages)}). {out} 폴더를 확인하세요.")
+        else:
+            print(f"완료! {out} 폴더를 확인하세요.")
+        if (out / "warning.txt").exists():
+            print(f"경고가 기록되었습니다: {out / 'warning.txt'}")
+        error_dir = out / "pipeline" / "error"
+        if error_dir.exists() and any(f.is_file() for f in error_dir.iterdir()):
+            print(f"파싱 실패 응답 원본: {error_dir}/")
     except Exception as e:
         if out is not None:
             log_warning(out, "main", traceback.format_exc())
