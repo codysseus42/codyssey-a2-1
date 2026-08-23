@@ -98,4 +98,6 @@ def generate_image(prompt :str) -> bytes:
     for p in parts:
          if "inlineData" in p:
           #  print(p["inlineData"]["mimeType"]) # 이미지 파일 타입확인 모델에 따라 요청으로 바꿀수 없는 경우도 있어서 외부에서 png전환
-            return base64.b64decode(p["inlineData"]["data"]) 
+            return base64.b64decode(p["inlineData"]["data"])
+    keys = [list(p.keys()) for p in parts]
+    raise RuntimeError(f"generate_image 응답에 이미지 데이터가 없습니다: {keys}") 

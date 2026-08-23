@@ -1,5 +1,6 @@
 import json, os
 from datetime import datetime
+from io import BytesIO
 from pathlib import Path
 from dotenv import load_dotenv
 from PIL import Image
@@ -77,16 +78,21 @@ def main():
         print("[naming] 재시도 후에도 실패했습니다. 다음 단계로 진행합니다.")
     elif naming.get("names") is not None:
         context["names"] = naming["names"]
+        for i, n in enumerate(naming["names"], 1):
+            print(f"  {i}. {n['ko']} ({n['en']}) - {n['meaning']}")
 
     print("[2/5] 슬로건 생성 중...")
     slogan = run_stage("slogan", context, out)
     if slogan is not None and slogan.get("slogans") is not None:
         context["slogans"] = slogan["slogans"]
+        for i, s in enumerate(slogan["slogans"], 1):
+            print(f"  {i}. {s}")
 
     print("[3/5] 브랜드 스토리 생성 중...")
     story = run_stage("story", context, out)
     if story is not None and story.get("story") is not None:
         context["story"] = story["story"]
+        print(f"  {story['story']} ({len(story['story'])}자)")
 
     print("[4/5] 컬러 팔레트 생성 중...")
     palette = run_stage("palette", context, out)
@@ -98,8 +104,35 @@ def main():
             palette_data["sub"] = palette["sub"]
         if palette_data:
             context["palette"] = palette_data
+        if palette.get("main") is not None:
+            m = palette["main"]
+            print(f"  메인: {m['hex']} ({m['name']}) - {m['role']}")
+        if palette.get("sub") is not None:
+            for s in palette["sub"]:
+                print(f"  서브: {s['hex']} ({s['name']}) - {s['role']}")
 
-    print(context)    
+    print("[5/5] 로고 시안 생성 중...")
+    logo = run_stage("logo", context, out)
+    if logo is not None and logo.get("logo_prompts") is not None:
+        logos = []
+        total = len(logo["logo_prompts"])
+        for i, item in enumerate(logo["logo_prompts"], 1):
+            print(f"{item['id']} [{i}/{total}] 생성 중...")
+            try:
+                image_bytes = gp.generate_image(item["prompt"])
+            except RuntimeError as e:
+                print(f"[logo] {item['id']} 이미지 생성 실패: {e}")
+                log_warning(out, item["id"], f"이미지 생성 실패: {e}")
+                continue
+            if gp.LAST_FALLBACK_USED is not None:
+                log_warning(out, item["id"], f"폴백 모델 사용: {gp.LAST_FALLBACK_USED}")
+            filename = f"{item['id']}.png"
+            image = Image.open(BytesIO(image_bytes))
+            image.save(out / filename)
+            logos.append(filename)
+        context["logos"] = logos
+
+    print(context)
 
 if __name__ == "__main__":
     main()
