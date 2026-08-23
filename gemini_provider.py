@@ -45,6 +45,7 @@ def generate_text(prompt: str) -> str:
                                 }
            }
     r = _call(TEXT_MODEL, body)
+    print(r.text[:600]) 
     parts = r.json()["candidates"][0]["content"]["parts"]
     return "".join(p["text"] for p in parts if "text" in p)
 
