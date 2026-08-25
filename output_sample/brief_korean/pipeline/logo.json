@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "logo_prompts": [
+    {
+      "id": "logo_01",
+      "concept": "정갈하게 겹쳐진 한과와 떡의 결을 현대적인 겹침 구조로 추상화한 미니멀 기하 심볼",
+      "prompt": "Minimal geometric logo symbol featuring clean overlapping square planes representing layered traditional textures. Flat vector style, #4D2C34 and #9E8365 shapes on solid #E4DBD0 background, centered, modern luxury aesthetic, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_02",
+      "concept": "정성스런 선물 포장의 매듭과 단안한 가락의 흐름을 유기적인 한 획으로 표현한 심볼",
+      "prompt": "Organic single continuous line art forming a fluid elegant loop inspired by silk ribbon knot and smooth sweetness. Flat vector style, #4D2C34 line on solid #E4DBD0 background, centered, minimalist refinement, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_03",
+      "concept": "전통 다식판의 수제 각인과 귀한 선물 인장의 가치를 표현한 모던 원형 엠블럼",
+      "prompt": "Sophisticated circular emblem logo badge featuring a simplified abstract flower petal pattern at the center. Flat vector style, colors #4D2C34, #9E8365, and #2B2627 on solid #E4DBD0 background, centered, premium heritage seal look, no text, no letters, no typography."
+    }
+  ]
+}

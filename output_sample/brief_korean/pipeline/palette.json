@@ -1,0 +1,25 @@
+{
+  "status": "ok",
+  "main": {
+    "hex": "#4D2C34",
+    "name": "Heritage Mulberry",
+    "role": "전통의 깊은 풍미와 현대적 미학을 연결하는 브랜드 중심색"
+  },
+  "sub": [
+    {
+      "hex": "#E4DBD0",
+      "name": "Soft Silk",
+      "role": "정갈한 포장과 시각적 여백을 구성하는 바탕색"
+    },
+    {
+      "hex": "#9E8365",
+      "name": "Muted Ochre",
+      "role": "선물용 패키지의 품격을 높여주는 보조 강조색"
+    },
+    {
+      "hex": "#2B2627",
+      "name": "Charcoal Ink",
+      "role": "본문 및 정보 표기에 가독성을 부여하는 대비색"
+    }
+  ]
+}

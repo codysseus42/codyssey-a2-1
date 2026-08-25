@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "main": {
+    "hex": "#1C2530",
+    "name": "Dawn Indigo",
+    "role": "새벽의 정적과 타협하지 않는 바른 기준을 상징하는 메인 컬러"
+  },
+  "sub": [
+    {
+      "hex": "#E2DACD",
+      "name": "Unbleached Paper",
+      "role": "화려함 없는 정직한 바탕과 여백을 나타내는 배경색"
+    },
+    {
+      "hex": "#9A634A",
+      "name": "Warm Ochre",
+      "role": "로스팅 과정의 온기와 장인정신을 절제 있게 보여주는 강조색"
+    }
+  ]
+}

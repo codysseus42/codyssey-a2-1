@@ -27,12 +27,14 @@ def load_brief(filePath) -> dict:
     if not isinstance(brief["keywords"], list):
         raise ValueError(f"keywords는 배열이어야 합니다. 현재 값: {brief['keywords']}")
     return brief
+    
 def load_prompt(stage_name: str, payload: dict) -> str:
     template = Path(f"./prompts/{stage_name}.txt").read_text(encoding="utf-8")
     if "{{입력}}" not in template:# 입력 값을 넣을 {{입력}} 이 없을 경우 검사
         raise ValueError(f"prompts/{stage_name}.txt에 {{{{입력}}}} 자리표시자가 없습니다")
     payload_text = json.dumps(payload, ensure_ascii=False, indent=2)
     return template.replace("{{입력}}", payload_text)
+    
 def log_warning(out_dir: Path, stage_name: str, message: str) -> None:
     line = f"{datetime.now():%Y-%m-%d %H:%M:%S} [{stage_name}] {message}\n"
     with open(out_dir / "warning.txt", "a", encoding="utf-8") as f:
@@ -67,6 +69,7 @@ def run_stage(stage_name: str, payload: dict, out_dir: Path) -> dict | None:
         try:
             result = gp.generate_text(prompt)
         except RuntimeError as e:
+            log_warning(out_dir, stage_name, f"API 호출 실패: {e}")
             print(f"[{stage_name}] API 호출 실패: {e}")
             return None
         if gp.LAST_FALLBACK_USED is not None:
@@ -77,12 +80,14 @@ def run_stage(stage_name: str, payload: dict, out_dir: Path) -> dict | None:
             errorPath = out_dir / "pipeline" / "error"
             errorPath.mkdir(parents=True,exist_ok=True)
             (errorPath /f"{stage_name}_raw.txt").write_text(result, encoding="utf-8")
+            log_warning(out_dir, stage_name, f"JSON 파싱 실패: {e} (원본: pipeline/error/{stage_name}_raw.txt)")
             print(f"[{stage_name}] JSON 파싱 실패: {e}")
             return None
         path = out_dir / "pipeline" / f"{stage_name}.json"
         path.write_text(json.dumps(jsonResult, ensure_ascii=False, indent=2),encoding="utf-8")
 
         if jsonResult.get("status") == 'error':
+            log_warning(out_dir, stage_name, f"진행 불가: {jsonResult.get('error')}")
             print(f"[{stage_name}] 진행불가: {jsonResult.get('error')}")
             return None
         return jsonResult
@@ -165,6 +170,11 @@ def main():
             failed_stages.append("naming")
         elif naming.get("names") is not None:
             context["names"] = naming["names"]
+            names_count = len(naming["names"])
+            if not (3 <= names_count <= 5):
+                msg = f"names 개수 {names_count}, 규격 3~5"
+                log_warning(out, "naming", msg)
+                print(f"[naming] {msg}")
             for i, n in enumerate(naming["names"], 1):
                 print(f"  {i}. {n['ko']} ({n['en']}) - {n['meaning']}")
         else:
@@ -174,6 +184,11 @@ def main():
         slogan = run_stage("slogan", context, out)
         if slogan is not None and slogan.get("slogans") is not None:
             context["slogans"] = slogan["slogans"]
+            slogans_count = len(slogan["slogans"])
+            if slogans_count != 3:
+                msg = f"slogans 개수 {slogans_count}, 규격 3"
+                log_warning(out, "slogan", msg)
+                print(f"[slogan] {msg}")
             for i, s in enumerate(slogan["slogans"], 1):
                 print(f"  {i}. {s}")
         else:
@@ -183,6 +198,11 @@ def main():
         story = run_stage("story", context, out)
         if story is not None and story.get("story") is not None:
             context["story"] = story["story"]
+            story_len = len(story["story"])
+            if not (200 <= story_len <= 400):
+                msg = f"story 길이 {story_len}자, 규격 300자 내외"
+                log_warning(out, "story", msg)
+                print(f"[story] {msg}")
             print(f"  {story['story']} ({len(story['story'])}자)")
         else:
             failed_stages.append("story")
@@ -196,6 +216,11 @@ def main():
                 palette_data["main"] = palette["main"]
             if palette.get("sub") is not None:
                 palette_data["sub"] = palette["sub"]
+                sub_count = len(palette["sub"])
+                if not (2 <= sub_count <= 3):
+                    msg = f"sub 개수 {sub_count}, 규격 2~3"
+                    log_warning(out, "palette", msg)
+                    print(f"[palette] {msg}")
             if palette_data:
                 context["palette"] = palette_data
                 save_palette_image(palette_data, out)
@@ -217,6 +242,10 @@ def main():
             print("[6/6] 로고 이미지 생성 중...")
             logos = []
             total = len(logo["logo_prompts"])
+            if total != 3:
+                msg = f"logo_prompts 개수 {total}, 규격 3"
+                log_warning(out, "logo", msg)
+                print(f"[logo] {msg}")
             fail_count = 0
             for i, item in enumerate(logo["logo_prompts"], 1):
                 print(f"  {item['id']} [{i}/{total}] 생성 중...")

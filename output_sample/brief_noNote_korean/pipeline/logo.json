@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "logo_prompts": [
+    {
+      "id": "logo_01",
+      "concept": "정성스럽게 겹겹이 쌓아 올린 시간을 정갈한 사각 구조로 표현한 기하학적 심볼",
+      "prompt": "Minimal geometric logo symbol featuring layered overlapping square frames that create a refined sense of depth and balance, flat vector style, #4E2E35 and #B38B59 elements on a solid #EADBCE background, centered, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_02",
+      "concept": "찻상의 따스한 온기와 마음을 부드럽게 건네는 흐름을 표현한 유기적 라인 아트",
+      "prompt": "Organic single continuous line artwork forming an elegant abstract curve representing gentle rising warmth and care, flat vector style, #4E2E35 line on a solid #EADBCE background, centered, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_03",
+      "concept": "소중한 마음을 차분히 담아내는 찻반의 조화로움을 상징하는 원형 엠블럼",
+      "prompt": "Circular emblem badge featuring an abstract harmonized motif of soft lunar arcs inside a delicate round border, flat vector style, colors #4E2E35 and #B38B59 with #2A2421 accents on a solid #EADBCE background, centered, no text, no letters, no typography."
+    }
+  ]
+}

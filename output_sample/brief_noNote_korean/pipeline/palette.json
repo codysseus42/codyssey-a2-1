@@ -1,0 +1,25 @@
+{
+  "status": "ok",
+  "main": {
+    "hex": "#4E2E35",
+    "name": "Plum Dusk",
+    "role": "새벽의 고요함과 깊게 졸여진 조청의 농도를 상징하는 메인 색"
+  },
+  "sub": [
+    {
+      "hex": "#EADBCE",
+      "name": "Silk Canvas",
+      "role": "여백의 미와 정갈한 패키징을 완성하는 찻상 바탕색"
+    },
+    {
+      "hex": "#B38B59",
+      "name": "Antique Amber",
+      "role": "전통 디저트의 고급스러운 온기와 섬세한 디테일을 강조하는 강조색"
+    },
+    {
+      "hex": "#2A2421",
+      "name": "Deep Ebony",
+      "role": "브랜드의 가독성과 서사의 또렷함을 부여하는 본문 대조색"
+    }
+  ]
+}

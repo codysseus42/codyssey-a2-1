@@ -5,9 +5,9 @@ Gemini API 호출 계층.
 
 .env 설정:
   API_KEY                필수
-  TEXT_MODEL             기본 gemini-3.7-flash
+  TEXT_MODEL             기본 gemini-3.6-flash
   IMAGE_MODEL            기본 gemini-3.1-flash-image
-  TEXT_MODEL_FALLBACK    기본 gemini-3.6-flash
+  TEXT_MODEL_FALLBACK    기본 gemini-3.5-flash
   IMAGE_MODEL_FALLBACK   기본 gemini-3.1-flash-lite-image
   BASE_URL               기본 https://generativelanguage.googleapis.com/v1beta/models
 
@@ -21,9 +21,9 @@ Gemini API 호출 계층.
   generate_image(prompt: str) -> bytes
 """
 
-TEXT_MODEL = os.environ.get("TEXT_MODEL", "gemini-3.7-flash")
+TEXT_MODEL = os.environ.get("TEXT_MODEL", "gemini-3.6-flash")
 IMAGE_MODEL = os.environ.get("IMAGE_MODEL", "gemini-3.1-flash-image")
-TEXT_MODEL_FALLBACK = os.environ.get("TEXT_MODEL_FALLBACK", "gemini-3.6-flash")
+TEXT_MODEL_FALLBACK = os.environ.get("TEXT_MODEL_FALLBACK", "gemini-3.5-flash")
 IMAGE_MODEL_FALLBACK = os.environ.get("IMAGE_MODEL_FALLBACK", "gemini-3.1-flash-lite-image")
 BASE_URL = os.environ.get("BASE_URL", "https://generativelanguage.googleapis.com/v1beta/models")
 LAST_FALLBACK_USED = None
@@ -34,11 +34,14 @@ LAST_FALLBACK_USED = None
 def _call(model, body, timeout=60, fallback=None):
     global LAST_FALLBACK_USED
     LAST_FALLBACK_USED = None
+    api_key = os.environ.get("API_KEY")
+    if not api_key:
+        raise RuntimeError("API_KEY가 설정되지 않았습니다. .env 파일에 API_KEY를 입력하세요 (발급: https://aistudio.google.com/apikey).")
     url = f"{BASE_URL}/{model}:generateContent"
     try:
         r = requests.post(
             url,
-            headers={"x-goog-api-key": os.environ["API_KEY"]},
+            headers={"x-goog-api-key": api_key},
             json=body,
             timeout=timeout,
         )
@@ -47,7 +50,7 @@ def _call(model, body, timeout=60, fallback=None):
         time.sleep(2)
         return requests.post(
             url,
-            headers={"x-goog-api-key": os.environ["API_KEY"]},
+            headers={"x-goog-api-key": api_key},
             json=body,
             timeout=timeout,
         )
@@ -59,7 +62,7 @@ def _call(model, body, timeout=60, fallback=None):
         fallback_url = f"{BASE_URL}/{fallback}:generateContent"
         r = requests.post(
             fallback_url,
-            headers={"x-goog-api-key": os.environ["API_KEY"]},
+            headers={"x-goog-api-key": api_key},
             json=body,
             timeout=timeout,
         )

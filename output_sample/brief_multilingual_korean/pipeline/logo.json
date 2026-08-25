@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "logo_prompts": [
+    {
+      "id": "logo_01",
+      "concept": "정확한 로스팅 온도와 장인의 정직한 원칙을 표현한 미니멀 수직 기하 심볼",
+      "prompt": "Minimal geometric logo symbol featuring three parallel vertical blocks with precise, understated proportions. Flat vector style, using #32383D and #A38E7B on a solid #E2DDD5 background. Centered, simple and unpretentious, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_02",
+      "concept": "단단한 내실과 나무의 심재를 닮은 유기적 나이테 곡선",
+      "prompt": "An organic line art logo symbol formed by a single continuous line sketching concentric wood grain rings. Flat vector style, using #32383D line on a solid #E2DDD5 background. Centered, understated and subtle, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_03",
+      "concept": "로스팅 과정의 온기와 원두의 절제된 형태를 담은 단단한 원형 엠블럼",
+      "prompt": "A simple circular emblem badge containing an abstract split-oval silhouette reflecting honest craftsmanship. Flat vector style, using colors #32383D, #A38E7B, and #7A7571 on a solid #E2DDD5 background. Centered, no text, no letters, no typography."
+    }
+  ]
+}

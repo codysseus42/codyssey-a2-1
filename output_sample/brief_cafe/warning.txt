@@ -1,4 +1,0 @@
-2026-08-23 14:32:33 [naming] 폴백 모델 사용: gemini-3.6-flash
-2026-08-23 14:33:01 [story] 폴백 모델 사용: gemini-3.6-flash
-2026-08-23 14:33:34 [palette] 폴백 모델 사용: gemini-3.6-flash
-2026-08-23 14:33:51 [logo] 폴백 모델 사용: gemini-3.6-flash

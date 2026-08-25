@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "logo_prompts": [
+    {
+      "id": "logo_01",
+      "concept": "온도와 시간의 정밀한 박자를 교차하는 수직·수평의 미니멀 기하 심볼",
+      "prompt": "A minimal geometric logo symbol featuring precise intersecting grid lines symbolizing time and temperature control, flat vector style, #1C2530 and #9A634A on a solid #E2DACD background, centered, unadorned and understated, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_02",
+      "concept": "원두의 결점이 솎아지고 본질만 남는 흐름을 표현한 유기적 곡선",
+      "prompt": "An organic single continuous stroke forming a refined abstract curve representing natural coffee grain, flat vector style, #1C2530 line on a solid #E2DACD background, centered, calm and simple, no text, no letters, no typography."
+    },
+    {
+      "id": "logo_03",
+      "concept": "새벽의 차가운 정적과 장인의 곧은 기준을 담은 정갈한 원형 엠블럼",
+      "prompt": "A clean circular emblem badge featuring subtle abstract concentric balance rings inside, flat vector style, using colors #1C2530 and #9A634A on a solid #E2DACD background, centered, honest and dignified, no text, no letters, no typography."
+    }
+  ]
+}
