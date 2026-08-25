@@ -3,13 +3,6 @@
 
 브리프(JSON) 하나를 넣으면 브랜드 네이밍 · 슬로건 · 브랜드 스토리 · 컬러 팔레트 · 로고 시안까지 자동으로 생성하는 Python CLI 파이프라인입니다. 
 
-브리프(JSON) 하나를 넣으면 브랜드 네이밍 · 슬로건 · 브랜드 스토리 · 컬러 팔레트 · 로고 시안까지 자동으로 생성하는 Python CLI 파이프라인입니다. 
-|조원|역활|
-|박유홍|조장,코드,코드프롬프팅,프롬프트 도움|
-|박정욱|회의진행,코드구현,코드 프롬프팅|
-|전선형|프롬프트 작성,테스트 데이터 준비,컨텐츠|
-|김지은|프롬프트 작성,테스트 데이터 준비,컨텐츠|
-
 ---
 
 <details open>
@@ -212,9 +205,10 @@ API 키 없이 결과물만 먼저 확인하고 싶다면 [output_sample](./outp
 `brief_sample/`에 여러 업종의 예시가 들어 있습니다.
 
 - **일반**: `brief_cafe`, `brief_casual`, `brief_kitchen`, `brief_pet`, `brief_tech`, `brief_korean`
-- **필수항목 검증용**: `brief_missing_korean` — 필수 필드 누락 시 차단 확인
-- **보너스 확인용**: `brief_multilingual_korean` — 다국어 네이밍과 경쟁사 분석
--**비필수 항목 제외한 버전**:, `brief_noNote_korean`
+- **필수 항목 검증용**: `brief_missing_korean` — `industry`를 뺀 브리프. API 호출 전에 차단되는지 확인
+- **선택 항목 제외 버전**: `brief_noNote_korean` — `tone`과 `notes` 없이도 진행되는지 확인
+- **보너스 확인용**: `brief_multilingual_korean` — 다국어 네이밍과 경쟁사 분석이 함께 동작
+- **보너스 대조군**: `brief_compare_korean` — `competitors`가 없고 `multilingual`이 false인 경우
 
 ```json
 {
