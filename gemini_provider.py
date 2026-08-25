@@ -1,5 +1,3 @@
-import os, base64, requests, time
-
 """
 Gemini API 호출 계층.
 
@@ -21,6 +19,8 @@ Gemini API 호출 계층.
   generate_image(prompt: str) -> bytes
 """
 
+import os, base64, requests, time
+
 TEXT_MODEL = os.environ.get("TEXT_MODEL", "gemini-3.6-flash")
 IMAGE_MODEL = os.environ.get("IMAGE_MODEL", "gemini-3.1-flash-image")
 TEXT_MODEL_FALLBACK = os.environ.get("TEXT_MODEL_FALLBACK", "gemini-3.5-flash")
@@ -28,8 +28,6 @@ IMAGE_MODEL_FALLBACK = os.environ.get("IMAGE_MODEL_FALLBACK", "gemini-3.1-flash-
 BASE_URL = os.environ.get("BASE_URL", "https://generativelanguage.googleapis.com/v1beta/models")
 LAST_FALLBACK_USED = None
 
-
- #url을 만드는 데 필요한 설정 값을 env에 추가 해주시고 URL을 만들어 주세요. 현재 google gemini api기준으로 작성 하였습니다. 
 
 def _call(model, body, timeout=60, fallback=None):
     global LAST_FALLBACK_USED
@@ -69,7 +67,6 @@ def _call(model, body, timeout=60, fallback=None):
     return r
 
 def generate_text(prompt: str) -> str:
-    #필요하시면 해당 내용부분을 바꾸신 provider
     body = {
             "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
@@ -86,7 +83,6 @@ def generate_text(prompt: str) -> str:
     return "".join(p["text"] for p in parts if "text" in p)
 
 def generate_image(prompt :str) -> bytes:
-    #필요하시면 해당 내용부분을 바꾸신 provider
     body = {"contents": [{"parts": [{"text": prompt}]}],
              "generationConfig": {
                                     "responseModalities": ["IMAGE"],
@@ -105,4 +101,4 @@ def generate_image(prompt :str) -> bytes:
           #  print(p["inlineData"]["mimeType"]) # 이미지 파일 타입확인 모델에 따라 요청으로 바꿀수 없는 경우도 있어서 외부에서 png전환
             return base64.b64decode(p["inlineData"]["data"])
     keys = [list(p.keys()) for p in parts]
-    raise RuntimeError(f"generate_image 응답에 이미지 데이터가 없습니다: {keys}") 
+    raise RuntimeError(f"generate_image 응답에 이미지 데이터가 없습니다: {keys}")
